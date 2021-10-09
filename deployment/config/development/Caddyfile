@@ -1,0 +1,13 @@
+{$DOMAIN} {
+    respond "Hello, world!"
+}
+
+api.{$DOMAIN} {
+    reverse_proxy backend:3000 {
+        header_down Strict-Transport-Security max-age=31536000;
+    }
+}
+
+pgadmin.{$DOMAIN} {
+    reverse_proxy pgadmin:80
+}

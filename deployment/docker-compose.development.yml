@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  caddy:
+    image: caddy/caddy:2.4.5-alpine
+    container_name: caddy-service
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./config/${NODE_ENV}/site:/srv
+
+  backend:
+    build:
+      context: ../
+      dockerfile: deployment/docker/Dockerfile
+      target: builder
+      args:
+        - NODE_ENV=${NODE_ENV?NODE_ENV is required}
+    command: npm run start:debug
+    volumes:
+      - ../:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_PORT=${POSTGRES_PORT?POSTGRES_PORT is required}
+      - POSTGRES_USER=${POSTGRES_USER?POSTGRES_USER is required}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?POSTGRES_PASSWORD is required}
+      - POSTGRES_DB=${POSTGRES_DB?POSTGRES_DB is required}
+    volumes:
+      - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: on-failure
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL?PGADMIN_DEFAULT_EMAIL is required}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD?PGADMIN_DEFAULT_PASSWORD is required}
+    depends_on:
+      - postgres

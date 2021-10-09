@@ -1,0 +1,10 @@
+dist
+logs
+CREDS.md
+node_modules
+test
+.vscode
+.DS_Store
+*.sqml
+*.sql
+*.pem

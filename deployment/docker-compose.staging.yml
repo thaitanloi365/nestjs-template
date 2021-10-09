@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  caddy:
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+  backend:
+    build:
+      context: ../
+      dockerfile: deployment/docker/Dockerfile
+      target: builder
+
+volumes:
+  caddy_data: {}
+  caddy_data: {}

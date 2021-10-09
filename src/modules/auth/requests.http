@@ -1,0 +1,18 @@
+### Login
+POST http://api.nestjs.localhost/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "test@gmail.com",
+    "password": "1234"
+}
+
+
+### Register
+POST http://api.nestjs.localhost/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "test@gmail.com",
+    "password": "1234"
+}
