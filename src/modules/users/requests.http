@@ -1,5 +1,5 @@
 ## Get list users
-GET http://api.nestjs.localhost/users HTTP/1.1
+GET http://api.nestjs.localhost/users?page=1&limit=120 HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc3Yjc1ODBhLWY5MjctNGMwZS04M2I1LWY0NGU0OTVkNzY3OSIsImlhdCI6MTYzMzc5NDk0OSwiZXhwIjoxNjMzODgxMzQ5fQ.LnA-tLZxF-vLzERstB1Ig91Z4p2XFWblV0UZlbFpK-E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU5Njc5MTI3LWU4YzUtNGFmMi05ODE3LWY4OTgzYjE0MzI1MyIsImlhdCI6MTYzMzgwMjQ4MiwiZXhwIjoxNjMzODg4ODgyfQ.u-dXwYiTq98CDWNluXhbnprlj0Ob8l7bsULCB8Oeryk
 

@@ -4,6 +4,12 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -22,6 +28,12 @@ export class UsersService {
     return user;
   }
 
+  async paginate(options: IPaginationOptions) {
+    const queryBuilder = this.usersRepository.createQueryBuilder('c');
+    queryBuilder.orderBy('c.name', 'DESC'); // Or whatever you need to do
+
+    return paginate<User>(queryBuilder, options);
+  }
   async findAll() {
     const users = await this.usersRepository.find();
     return users;

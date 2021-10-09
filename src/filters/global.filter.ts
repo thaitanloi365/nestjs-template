@@ -1,5 +1,6 @@
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   ForbiddenException,
@@ -35,14 +36,27 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     switch (exception.constructor) {
       case HttpException:
+        code = (exception as HttpException).name;
         status = (exception as HttpException).getStatus();
         message = (exception as HttpException).message;
         break;
       case UnauthorizedException:
+        code = (exception as BadRequestException).name;
+        status = (exception as UnauthorizedException).getStatus();
+        message = (exception as UnauthorizedException).message;
+        break;
+      case BadRequestException:
+        code = (exception as BadRequestException).name;
+        status = (exception as BadRequestException).getStatus();
+        message = (exception as BadRequestException).message;
+        break;
+      case UnauthorizedException:
+        code = (exception as UnauthorizedException).name;
         status = (exception as UnauthorizedException).getStatus();
         message = (exception as UnauthorizedException).message;
         break;
       case ForbiddenException:
+        code = (exception as ForbiddenException).name;
         status = (exception as ForbiddenException).getStatus();
         message = (exception as ForbiddenException).message;
         break;
