@@ -9,15 +9,9 @@ RUN echo "Building app ${NODE_ENV}"
 
 WORKDIR /app
 
-RUN pwd
-
 COPY . .
 
-RUN ls -la
-
-COPY deployment/config/${NODE_ENV}/.env .env
-
-RUN npm install
+RUN yarn install
 
 
 FROM node:14-alpine AS production
@@ -27,14 +21,14 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json yarn.lock ./
 
-RUN npm install --only=production
+RUN yarn install --production=true
 
 COPY . .
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/.env ./dist
+COPY --from=builder /app/deployment/config/${NODE_ENV}/.env ./dist
 
 CMD ["node", "dist/main"]
 

@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreateUserDto } from 'src/modules/users/dtos/create-user.dto';
-import { UsersService } from 'src/modules/users/users.service';
+import { CreateUserDto } from '../users/dtos/create-user.dto';
+import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dtos/login.dto';
+import { LoginDto, LoginResponseDto } from './dtos/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,9 +18,19 @@ export class AuthController {
 
   @Post('/register')
   async register(@Body() body: LoginDto) {
-    const dto = new CreateUserDto();
-    dto.email = body.email;
-    dto.password = body.password;
-    const user = this.usersService.create(dto);
+    const dto = new CreateUserDto(body.email, body.password);
+    const user = await this.usersService.create(dto);
+    const token = await this.authService.createToken(user);
+
+    return new LoginResponseDto(user, token);
+  }
+
+  @Post('/forgot_password')
+  async forgotPassword(@Body() body: LoginDto) {
+    const dto = new CreateUserDto(body.email, body.password);
+    const user = await this.usersService.create(dto);
+    const token = await this.authService.createToken(user);
+
+    return new LoginResponseDto(user, token);
   }
 }

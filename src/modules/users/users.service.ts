@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -16,8 +15,10 @@ export class UsersService {
     const dto = new User();
     dto.email = createUserDto.email;
     dto.password = createUserDto.password;
+    dto.name = '';
 
     const user = await this.usersRepository.save(dto);
+
     return user;
   }
 
@@ -26,8 +27,9 @@ export class UsersService {
     return users;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    const user = await this.usersRepository.findOne({ id });
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -41,7 +43,7 @@ export class UsersService {
   async findByEmail(email: string) {
     const user = await this.usersRepository.findOne({ email });
     if (!user) {
-      throw NotFoundException;
+      throw new NotFoundException();
     }
     return user;
   }

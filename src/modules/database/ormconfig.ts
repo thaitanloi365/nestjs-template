@@ -20,7 +20,7 @@ var config: PostgresConnectionOptions = {
   namingStrategy: new SnakeNamingStrategy(),
   logging: true,
   synchronize: false,
-  entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
+  entities: [__dirname + '/../../**/entities/*.entity{.ts,.js}'],
   migrations: [`src/modules/database/migrations/${process.env.NODE_ENV}/*.js`],
   cli: {
     migrationsDir: `src/modules/database/migrations/${process.env.NODE_ENV}`,

@@ -32,7 +32,7 @@ compose: ## - Run docker-compose with default config (Example: make compose env=
 	@echo "${TARGET_COLOR} End dc !${RESET}"
 
 migration-generate:
-	docker exec -i app-backend npm run migration:generate -- $(name) -o
+	docker exec -i app-backend yarn migration:generate -- $(name) -o
 
 migration-run:
-	docker exec -i app-backend npm run migration:run
+	docker exec -i app-backend yarn migration:run

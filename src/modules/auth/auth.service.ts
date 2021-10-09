@@ -1,20 +1,27 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UsersService } from 'src/modules/users/users.service';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
+import { LoginResponseDto, TokenDio } from './dtos/login.dto';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   async getAuthenticatedUser(email: string, hashPassword: string) {
-    try {
-      const user = await this.usersService.findByEmail(email);
-      await this.verifyPassword(user.password, hashPassword);
+    const user = await this.usersService.findByEmail(email);
 
-      return user;
-    } catch (error) {
-      throw new BadRequestException('Wrong credentials provided');
-    }
+    await this.verifyPassword(user.password, hashPassword);
+
+    const token = await this.createToken(user);
+
+    return new LoginResponseDto(user, token);
   }
 
   async verifyPassword(password: string, hashPassword: string) {
@@ -22,5 +29,15 @@ export class AuthService {
     if (!isMatch) {
       throw new BadRequestException('Wrong credentials provided');
     }
+  }
+
+  async createToken(user: User) {
+    const expiresIn = this.configService.get('JWT_EXPIRY');
+    const accessToken = await this.jwtService.signAsync(
+      { id: user.id },
+      { expiresIn },
+    );
+
+    return new TokenDio(expiresIn, accessToken);
   }
 }
