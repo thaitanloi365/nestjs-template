@@ -1,3 +1,7 @@
 {
-    "typescript.preferences.importModuleSpecifier": "relative"
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "[handlebars]": {
+        "editor.suggest.insertMode": "replace",
+        "editor.formatOnSave": false
+    }
 }

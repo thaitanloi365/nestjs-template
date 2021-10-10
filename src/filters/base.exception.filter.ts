@@ -5,24 +5,27 @@ import {
   ExceptionFilter,
   ForbiddenException,
   HttpException,
+  HttpServer,
   HttpStatus,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { AbstractHttpAdapter } from '@nestjs/core';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { ServerResponse } from 'http';
 import {
   QueryFailedError,
   EntityNotFoundError,
   CannotCreateEntityIdMapError,
 } from 'typeorm';
-import { GlobalResponseError } from './global.response.error';
-
+import { BaseResponseError } from './base.exception.response.error';
+import { isObject } from 'lodash';
 @Catch()
-export class GlobalExceptionFilter implements ExceptionFilter {
+export class BaseExceptionFilter<T = any> implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const request = ctx.getRequest<FastifyRequest>();
+    const response = ctx.getResponse<FastifyReply>();
     let message = (exception as any).message.message;
     let code = 'HttpException';
 
@@ -79,8 +82,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
-    response
+    return response
       .status(status)
-      .json(GlobalResponseError(status, message, code, request));
+      .send(BaseResponseError(status, message, code, request));
   }
 }

@@ -1,16 +1,16 @@
-import { Request } from 'express';
-import { IResponseError } from './globa.interface';
+import { IResponseError } from './base.exception.interface';
+import { FastifyRequest } from 'fastify';
 
-export const GlobalResponseError: (
+export const BaseResponseError: (
   statusCode: number,
   message: string,
   code: string,
-  request: Request,
+  request: FastifyRequest,
 ) => IResponseError = (
   statusCode: number,
   message: string,
   code: string,
-  request: Request,
+  request: FastifyRequest,
 ): IResponseError => {
   return {
     statusCode,

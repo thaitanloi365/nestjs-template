@@ -21,27 +21,14 @@ export class RegisterDto {
   password: string;
 }
 
-export class TokenDio {
-  @ApiProperty()
-  expiresIn: string;
-
-  @ApiProperty()
-  accessToken: string;
-
-  constructor(expiresIn: string, accessToken: string) {
-    this.expiresIn = expiresIn;
-    this.accessToken = accessToken;
-  }
-}
-
 export class LoginResponseDto {
   @ApiProperty()
   user: User;
 
   @ApiProperty()
-  token: TokenDio;
+  token: string;
 
-  constructor(user: User, token: TokenDio) {
+  constructor(user: User, token: string) {
     this.user = user;
     this.token = token;
   }

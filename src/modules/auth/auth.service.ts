@@ -2,9 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { LoginResponseDto, TokenDio } from './dtos/login.dto';
+import { LoginResponseDto } from './dtos/login.dto';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
+import { generateUUID } from '../../common/utils/genrate-uuid';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async getAuthenticatedUser(email: string, hashPassword: string) {
+  async validateUser(email: string, hashPassword: string) {
     const user = await this.usersService.findByEmail(email);
 
     await this.verifyPassword(user.password, hashPassword);
@@ -32,12 +33,29 @@ export class AuthService {
   }
 
   async createToken(user: User) {
-    const expiresIn = this.configService.get('JWT_EXPIRY');
+    if (!user.jwtId || user.jwtId == '') {
+      user.jwtId = generateUUID();
+      await this.usersService.updateJwtId(user.id, user.jwtId);
+    }
+
     const accessToken = await this.jwtService.signAsync(
       { id: user.id },
-      { expiresIn },
+      { jwtid: user.jwtId },
     );
 
-    return new TokenDio(expiresIn, accessToken);
+    return accessToken;
+  }
+
+  async createTokenResetPassword(user: User) {
+    const accessToken = await this.jwtService.signAsync(
+      { id: user.id },
+      {
+        jwtid: generateUUID(),
+        secret: this.configService.get('JWT_SECRET_RESET_PASSWORD'),
+      },
+    );
+
+    await this.usersService.updateResetPasswordToken(user.id, accessToken);
+    return accessToken;
   }
 }

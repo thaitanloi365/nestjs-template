@@ -9,6 +9,7 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { generateUUID } from '../../common/utils/genrate-uuid';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +23,7 @@ export class UsersService {
     dto.email = createUserDto.email;
     dto.password = createUserDto.password;
     dto.name = '';
+    dto.jwtId = generateUUID();
 
     const user = await this.usersRepository.save(dto);
 
@@ -44,12 +46,46 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async logout(id: string) {
+    await this.usersRepository.update({ id }, { jwtId: null });
+  }
+
+  update(id: string, updateUserDto: Partial<User>) {
     return `This action updates a #${id} user`;
   }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async updateResetPasswordToken(id: string, token: string) {
+    return await this.usersRepository.update(
+      { id },
+      {
+        resetPasswordToken: token,
+      },
+    );
+  }
+
+  async updateJwtId(id: string, jwtId: string) {
+    return await this.usersRepository.update(
+      { id },
+      {
+        jwtId,
+      },
+    );
+  }
+
+  async updatePassword(user: User, newPassword: string) {
+    user.password = newPassword;
+    await user.hashPassword();
+    return await this.usersRepository.update(
+      { id: user.id },
+      {
+        password: user.password,
+        resetPasswordToken: null,
+      },
+    );
   }
 
   async findByEmail(email: string) {

@@ -7,6 +7,7 @@ import { LocalStrategy } from './stratergies/local.stratergy';
 import { JwtStatergy } from './stratergies/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
+import { JwtResetPasswordStatergy } from './stratergies/jwt-reset-password.strategy';
 
 @Module({
   imports: [
@@ -17,14 +18,16 @@ import { UsersModule } from '../users/users.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get('JWT_EXPIRY'),
-        },
       }),
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStatergy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStatergy,
+    JwtResetPasswordStatergy,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

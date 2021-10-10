@@ -13,13 +13,14 @@ export class JwtStatergy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { id: string }) {
-    const { id } = payload;
+  async validate(payload: { id: string; jti: string; iat: number }) {
+    const { id, jti } = payload;
     const user = await this.usersService.findOne(id);
 
-    if (!user) {
+    if (!user || user.jwtId !== jti) {
       throw new UnauthorizedException();
     }
+
     return user;
   }
 }

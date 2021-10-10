@@ -10,6 +10,8 @@ services:
       - 443:443
     volumes:
       - ./config/${NODE_ENV}/site:/srv
+    networks:
+      - app-public
 
   backend:
     build:
@@ -19,11 +21,15 @@ services:
       args:
         - NODE_ENV=${NODE_ENV?NODE_ENV is required}
     command: yarn start:debug
+    ports:
+      - 3000:3000
     volumes:
       - ../:/app
       - /app/node_modules
     depends_on:
       - postgres
+    networks:
+      - app-public
 
   postgres:
     container_name: postgres
@@ -35,6 +41,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB?POSTGRES_DB is required}
     volumes:
       - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+    networks:
+      - app-public
 
   pgadmin:
     image: dpage/pgadmin4
@@ -45,3 +53,6 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD?PGADMIN_DEFAULT_PASSWORD is required}
     depends_on:
       - postgres
+
+networks:
+  app-public:

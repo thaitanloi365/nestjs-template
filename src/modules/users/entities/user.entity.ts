@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { UserRole } from '../enums/role.enum';
 import { AbstractEntity } from '../../../common/entities/abtract.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class User extends AbstractEntity {
@@ -17,13 +18,19 @@ export class User extends AbstractEntity {
   role: UserRole;
 
   @Column({ type: 'varchar' })
+  @Exclude()
   password: string;
 
   @Column({ type: 'varchar', nullable: true })
+  @Exclude()
   resetPasswordToken: string;
 
   @Column({ type: 'bool', default: false })
   mailVerfied: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
+  @Exclude()
+  jwtId: string;
 
   @BeforeInsert()
   async hashPassword() {

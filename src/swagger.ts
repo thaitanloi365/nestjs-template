@@ -21,5 +21,5 @@ export function setupSwagger(app: INestApplication): void {
     customSiteTitle: 'API Docs',
   };
 
-  SwaggerModule.setup('api/docs', app, document, customOptions);
+  SwaggerModule.setup('/api/docs', app, document, customOptions);
 }

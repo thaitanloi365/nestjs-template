@@ -1,26 +1,36 @@
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import {
+  NestFastifyApplication,
+  FastifyAdapter,
+} from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
-import { setupFtilers } from './filters/setup-filter';
+import { setupFitlers } from './filters/setup-filters';
+import { setupInterceptors } from './interceptor/setup-interceptors';
+import { setupPipes } from './pipes/setup-pipes';
 import { setupSwagger } from './swagger';
+import { setupViews } from './views/setup-views';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const logger = new Logger('App');
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+  );
 
   setupSwagger(app);
 
-  setupFtilers(app);
+  setupFitlers(app);
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      exceptionFactory: (errors) => {
-        const transformedMessage = errors
-          .map((err) => Object.values(err.constraints || {})?.join('\n'))
-          .join('\n');
-        throw new BadRequestException(transformedMessage);
-      },
-    }),
+  setupPipes(app);
+
+  setupInterceptors(app);
+
+  setupViews(app);
+
+  const port = process.env.PORT;
+  await app.listen(port, '0.0.0.0', () =>
+    logger.log(`Application started at ::${port}`),
   );
-  await app.listen(3000);
 }
 bootstrap();
