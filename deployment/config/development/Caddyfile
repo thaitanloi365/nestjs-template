@@ -1,9 +1,9 @@
 {$DOMAIN} {
-    respond "Hello, world!"
+    respond "Welcome to {$APP_NAME}-{$NODE_ENV}"
 }
 
 api.{$DOMAIN} {
-    reverse_proxy backend:3000 {
+    reverse_proxy backend:{$PORT} {
         header_down Strict-Transport-Security max-age=31536000;
     }
 }

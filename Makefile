@@ -28,7 +28,7 @@ RESET := $(shell echo "\033[0m")
 compose: ## - Run docker-compose with default config (Example: make compose env=local args="up")
 	@echo "${TARGET_COLOR} Start dc !${RESET}"
 	@docker network create ${DEFAULT_NETWORK} || true
-	docker-compose -p ${APP_NAME}_${NODE_ENV} --env-file=${cnf} -f ${DEPLOYMENT_DOCKER_COMPOSE} -f ${DEPLOYMENT_DOCKER_COMPOSE_OVERRIDE} $(args)
+	docker-compose -p ${CONTAINER_NAME_PREFIX}_${NODE_ENV} --env-file=${cnf} -f ${DEPLOYMENT_DOCKER_COMPOSE} -f ${DEPLOYMENT_DOCKER_COMPOSE_OVERRIDE} $(args)
 	@echo "${TARGET_COLOR} End dc !${RESET}"
 
 migration-generate:

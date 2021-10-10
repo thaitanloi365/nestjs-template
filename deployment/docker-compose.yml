@@ -3,10 +3,12 @@ version: '3.8'
 services:
   caddy:
     image: caddy/caddy:2.4.5-alpine
-    container_name: ${APP_NAME?APP_NAME is required}-caddy
+    container_name: ${CONTAINER_NAME_PREFIX?CONTAINER_NAME_PREFIX is required}-caddy
     restart: unless-stopped
     environment:
+      - APP_NAME=${APP_NAME?APP_NAME is required}
       - DOMAIN=${DOMAIN?DOMAIN is required}
+      - PORT=${PORT?PORT is required}
     ports:
       - 80:80
       - 443:443
@@ -14,4 +16,4 @@ services:
       - ./config/${NODE_ENV}/Caddyfile:/etc/caddy/Caddyfile
 
   backend:
-    container_name: ${APP_NAME?APP_NAME is required}-backend
+    container_name: ${CONTAINER_NAME_PREFIX?CONTAINER_NAME_PREFIX is required}-backend
